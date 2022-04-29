@@ -1,11 +1,12 @@
 mod lib;
 use lib::prelude::*;
+use crate::lib::board::Color::{BLACK, WHITE};
 
 
 fn main() {
-    let bb = BitBoard::default()
-        .set(E1)
-        .set(E8);
+    let board = Board::default()
+        .with_knight(G1, WHITE)
+        .with_knight(G8, BLACK);
 
-    println!("{}", bb);
+    println!("{}", board);
 }

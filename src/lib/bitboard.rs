@@ -1,8 +1,17 @@
 use std::fmt::{Display, Formatter, Result};
+use std::ops;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub struct BitBoard(u64);
 
+
+impl ops::BitOr for BitBoard {
+    type Output = Self;
+
+    fn bitor(self, rhs: Self) -> Self::Output {
+        Self(self.0 | rhs.0)
+    }
+}
 
 impl BitBoard {
     pub fn new(val: u64) -> Self {
@@ -10,22 +19,19 @@ impl BitBoard {
     }
 
     #[inline]
+    pub fn get(&self, bit: usize) -> bool {
+        self.0 & (1 << bit) != 0
+    }
+
+    #[inline]
     pub fn set(&self, bit: u32) -> BitBoard {
         BitBoard(self.0 | 1 << bit)
     }
-
 
     #[inline]
     pub fn cleared(&self, bit: u32) -> BitBoard {
         BitBoard(self.0 & !(1 << bit))
     }
-
-
-    #[inline]
-    pub fn get(&self, bit: usize) -> bool {
-        self.0 & (1 << bit) != 0
-    }
-
 
     #[inline]
     pub fn count_ones(&self) -> u32 {
@@ -112,12 +118,24 @@ mod tests {
         assert_eq!(bb.0, 0x6fff_ffff_ffff_fffc)
     }
 
+    #[test]
+    fn bit_or() {
+        // arrange
+        let bb1 = BitBoard::default().set(4);
+        let bb2 = BitBoard::default().set(7);
+
+        // act
+        let bb = bb1 | bb2;
+
+        // assert
+        assert_eq!(bb.get(4), true);
+        assert_eq!(bb.get(7), true);
+    }
 
     #[test]
     fn count_ones() {
         // arrange
-        let mut bb = BitBoard::default();
-        bb.0 = 42;
+        let bb = BitBoard::new(42);
 
         // act
         let ones = bb.count_ones();
