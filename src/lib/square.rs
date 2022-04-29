@@ -13,6 +13,17 @@ pub const fn from_square(square: Square) -> (u32, u32) {
     (x, y)
 }
 
+pub fn square_to_name(square: Square) -> String {
+    let (x, y) = from_square(square);
+    let col = (('A' as u8) + (x as u8)) as char;
+    let row = (('1' as u8) + (y as u8)) as char;
+
+    let mut square_name = String::new();
+    square_name.push(col);
+    square_name.push(row);
+
+    square_name
+}
 
 pub const A1: Square = to_square(0, 0);
 pub const A2: Square = to_square(0, 1);
@@ -85,3 +96,18 @@ pub const H5: Square = to_square(7, 4);
 pub const H6: Square = to_square(7, 5);
 pub const H7: Square = to_square(7, 6);
 pub const H8: Square = to_square(7, 7);
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn squares_to_name() {
+        assert_eq!(square_to_name(A1), "A1");
+        assert_eq!(square_to_name(A8), "A8");
+        assert_eq!(square_to_name(E4), "E4");
+        assert_eq!(square_to_name(H1), "H1");
+        assert_eq!(square_to_name(H8), "H8");
+    }
+}
