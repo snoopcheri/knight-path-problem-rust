@@ -5,21 +5,25 @@ pub struct BitBoard(u64);
 
 
 impl BitBoard {
+    pub fn new(val: u64) -> Self {
+        BitBoard(val)
+    }
+
     #[inline]
-    pub fn set_bit(&mut self, position: u32) {
-        self.0 |= 1 << position;
+    pub fn set(&self, bit: u32) -> BitBoard {
+        BitBoard(self.0 | 1 << bit)
     }
 
 
     #[inline]
-    pub fn clear_bit(&mut self, position: u32) {
-        self.0 &= !(1 << position);
+    pub fn cleared(&self, bit: u32) -> BitBoard {
+        BitBoard(self.0 & !(1 << bit))
     }
 
 
     #[inline]
-    pub fn is_bit_set(&self, position: usize) -> bool {
-        self.0 & (1 << position) != 0
+    pub fn get(&self, bit: usize) -> bool {
+        self.0 & (1 << bit) != 0
     }
 
 
@@ -59,7 +63,7 @@ impl Display for BitBoard {
 
                 let position = x + (y * 8);
 
-                if self.is_bit_set(position) {
+                if self.get(position) {
                     str.push('*');
                 } else {
                     str.push('.');
@@ -83,14 +87,12 @@ mod tests {
 
     #[test]
     fn set_bit() {
-        // arrange
-        let mut bb = BitBoard::default();
-
-        // act
-        bb.set_bit(0);
-        bb.set_bit(1);
-        bb.set_bit(60);
-        bb.set_bit(63);
+        // arrange + act
+        let bb = BitBoard::default()
+            .set(0)
+            .set(1)
+            .set(60)
+            .set(63);
 
         // assert
         assert_eq!(bb.0, 0x9000_0000_0000_0003);
@@ -99,15 +101,12 @@ mod tests {
 
     #[test]
     fn clear_bit() {
-        // arrange
-        let mut bb = BitBoard::default();
-        bb.0 = 0xffff_ffff_ffff_ffff;
-
-        // act
-        bb.clear_bit(0);
-        bb.clear_bit(1);
-        bb.clear_bit(60);
-        bb.clear_bit(63);
+        // arrange + act
+        let bb = BitBoard::new(0xffff_ffff_ffff_ffff)
+            .cleared(0)
+            .cleared(1)
+            .cleared(60)
+            .cleared(63);
 
         // assert
         assert_eq!(bb.0, 0x6fff_ffff_ffff_fffc)
@@ -130,20 +129,20 @@ mod tests {
     #[test]
     fn next_one() {
         // arrange
-        let mut bb = BitBoard::default();
-        bb.set_bit(0);
-        bb.set_bit(42);
-        bb.set_bit(63);
+        let mut bb = BitBoard::default()
+            .set(0)
+            .set(42)
+            .set(63);
 
         // act + assert
         assert_eq!(bb.next_one(), Some(0));
-        bb.clear_bit(0);
+        bb = bb.cleared(0);
         //
         assert_eq!(bb.next_one(), Some(42));
-        bb.clear_bit(42);
+        bb = bb.cleared(42);
 
         assert_eq!(bb.next_one(), Some(63));
-        bb.clear_bit(63);
+        bb = bb.cleared(63);
 
         assert_eq!(bb.next_one(), None)
     }

@@ -22,7 +22,7 @@ impl Iterator for BitBoardIterator {
 
         match next_one {
             Some(next) => {
-                self.bb.clear_bit(next);
+                self.bb = self.bb.cleared(next);
                 Some(next)
             },
             _ => None
@@ -32,17 +32,16 @@ impl Iterator for BitBoardIterator {
 
 
 #[cfg(test)]
-#[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
     fn iterator() {
         // arrange
-        let mut bb = BitBoard::default();
-        for idx in [0, 42, 63] {
-            bb.set_bit(idx);
-        }
+        let bb = BitBoard::default()
+            .set(0)
+            .set(42)
+            .set(63);
 
         let mut bb_iterator = BitBoardIterator::new(bb);
 
