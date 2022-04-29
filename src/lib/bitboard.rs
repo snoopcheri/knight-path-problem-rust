@@ -6,13 +6,13 @@ pub struct BitBoard(u64);
 
 impl BitBoard {
     #[inline]
-    pub fn set_bit(&mut self, position: usize) {
+    pub fn set_bit(&mut self, position: u32) {
         self.0 |= 1 << position;
     }
 
 
     #[inline]
-    pub fn clear_bit(&mut self, position: usize) {
+    pub fn clear_bit(&mut self, position: u32) {
         self.0 &= !(1 << position);
     }
 
