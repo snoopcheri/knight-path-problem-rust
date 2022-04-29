@@ -1,3 +1,5 @@
+#[allow(dead_code)]
+
 type Square = u32;
 
 pub const fn to_square(x: u32, y: u32) -> Square {
