@@ -1,5 +1,6 @@
 use std::fmt::{Display, Formatter, Result};
 
+#[derive(Copy, Clone)]
 pub struct BitBoard(u64);
 
 
@@ -26,6 +27,17 @@ impl BitBoard {
     pub fn count_ones(&self) -> u32 {
         self.0.count_ones()
     }
+
+
+    #[inline]
+    pub fn next_one(&self) -> Option<u32> {
+        let trailing_zeros = self.0.trailing_zeros();
+
+        match trailing_zeros {
+            0..=63 => Some(trailing_zeros),
+            _ => None
+        }
+    }
 }
 
 impl Default for BitBoard {
@@ -40,7 +52,7 @@ impl Display for BitBoard {
         let mut str = String::new();
 
         for y in (0..8).rev() {
-            str.push_str(&y.to_string());
+            str.push_str(&(y + 1).to_string());
 
             for x in 0..8 {
                 str.push(' ');
@@ -57,7 +69,7 @@ impl Display for BitBoard {
             str.push_str("\n");
         }
 
-        str.push_str(" 0 1 2 3 4 5 6 7\n");
+        str.push_str(" a b c d e f g h\n");
 
         write!(formatter, "{}", str)
     }
@@ -114,4 +126,26 @@ mod tests {
         // assert
         assert_eq!(ones, 3);
     }
+
+    #[test]
+    fn next_one() {
+        // arrange
+        let mut bb = BitBoard::default();
+        bb.set_bit(0);
+        bb.set_bit(42);
+        bb.set_bit(63);
+
+        // act + assert
+        assert_eq!(bb.next_one(), Some(0));
+        bb.clear_bit(0);
+        //
+        assert_eq!(bb.next_one(), Some(42));
+        bb.clear_bit(42);
+
+        assert_eq!(bb.next_one(), Some(63));
+        bb.clear_bit(63);
+
+        assert_eq!(bb.next_one(), None)
+    }
+
 }
