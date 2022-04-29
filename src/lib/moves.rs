@@ -1,6 +1,7 @@
 use std::fmt::{Display, Formatter};
 use crate::{Square, square_to_name};
 
+#[derive(Debug, PartialEq)]
 pub struct Move {
     pub from: Square,
     pub to: Square,

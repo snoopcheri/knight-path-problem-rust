@@ -64,6 +64,10 @@ impl Board {
             BLACK => Board { white_knights: self.white_knights, black_knights: self.black_knights.set(square) },
         }
     }
+
+    pub fn is_occupied(&self, square: Square) -> bool {
+        self.knights().get(square as usize)
+    }
 }
 
 

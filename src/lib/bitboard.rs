@@ -1,5 +1,6 @@
 use std::fmt::{Display, Formatter, Result};
 use std::ops;
+use crate::BitBoardIterator;
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct BitBoard(u64);
@@ -47,6 +48,10 @@ impl BitBoard {
             0..=63 => Some(trailing_zeros),
             _ => None
         }
+    }
+    
+    pub fn iter(&self) -> BitBoardIterator {
+        BitBoardIterator::new(*self)
     }
 }
 
