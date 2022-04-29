@@ -57,7 +57,7 @@ impl Display for BitBoard {
             for x in 0..8 {
                 str.push(' ');
 
-                let position = (x * 8) + y;
+                let position = x + (y * 8);
 
                 if self.is_bit_set(position) {
                     str.push('*');
@@ -69,7 +69,7 @@ impl Display for BitBoard {
             str.push_str("\n");
         }
 
-        str.push_str(" a b c d e f g h\n");
+        str.push_str("  a b c d e f g h\n");
 
         write!(formatter, "{}", str)
     }
