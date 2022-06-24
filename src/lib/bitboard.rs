@@ -2,9 +2,8 @@ use std::fmt::{Display, Formatter, Result};
 use std::ops;
 use crate::BitBoardIterator;
 
-#[derive(Copy, Clone, Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct BitBoard(u64);
-
 
 impl ops::BitOr for BitBoard {
     type Output = Self;
@@ -39,6 +38,10 @@ impl BitBoard {
         self.0.count_ones()
     }
 
+    #[inline]
+    pub fn toggled(&self) -> BitBoard {
+        BitBoard(self.0 ^ u64::MAX)
+    }
 
     #[inline]
     pub fn next_one(&self) -> Option<u32> {
@@ -170,4 +173,24 @@ mod tests {
         assert_eq!(bb.next_one(), None)
     }
 
+    #[test]
+    fn toggled() {
+        // arrange
+        let mut bb = BitBoard::default()
+            .set(0)
+            .set(42)
+            .set(63);
+
+        // act
+        let toggled = bb.toggled();
+
+        // assert
+        for bit in 0..63 {
+            if bit == 0 || bit == 42 || bit == 63 {
+                assert_eq!(toggled.get(bit), false, "Bit {} should not be set", bit)
+            } else {
+                assert_eq!(toggled.get(bit), true, "Bit {} should be set", bit)
+            }
+        }
+    }
 }

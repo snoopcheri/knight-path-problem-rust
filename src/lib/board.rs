@@ -1,11 +1,13 @@
 use std::fmt::{Display, Formatter};
 use crate::{BitBoard, BLACK, Square, to_square, WHITE};
 
+#[derive(Copy, Clone)]
 pub enum Color {
     WHITE,
     BLACK,
 }
 
+#[derive(PartialEq, PartialOrd, Eq, Ord)]
 pub struct Board {
     pub white_knights: BitBoard,
     pub black_knights: BitBoard,
