@@ -5,4 +5,5 @@ pub mod board;
 pub mod board_generator;
 pub mod moves;
 pub mod moves_generator;
+pub mod solver;
 pub mod square;

@@ -2,7 +2,7 @@ use std::fmt::{Display, Formatter, Result};
 use std::ops;
 use crate::BitBoardIterator;
 
-#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct BitBoard(u64);
 
 impl ops::BitOr for BitBoard {
@@ -19,7 +19,7 @@ impl BitBoard {
     }
 
     #[inline]
-    pub fn get(&self, bit: usize) -> bool {
+    pub fn get(&self, bit: u32) -> bool {
         self.0 & (1 << bit) != 0
     }
 

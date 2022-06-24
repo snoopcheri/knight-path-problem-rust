@@ -1,5 +1,5 @@
 use std::fmt::{Display, Formatter};
-use crate::{BitBoard, BLACK, Square, to_square, WHITE};
+use crate::{BitBoard, BLACK, Move, Square, to_square, WHITE};
 
 #[derive(Copy, Clone)]
 pub enum Color {
@@ -7,7 +7,7 @@ pub enum Color {
     BLACK,
 }
 
-#[derive(PartialEq, PartialOrd, Eq, Ord)]
+#[derive(PartialEq, PartialOrd, Eq, Ord, Hash)]
 pub struct Board {
     pub white_knights: BitBoard,
     pub black_knights: BitBoard,
@@ -37,9 +37,9 @@ impl Display for Board {
 
                 let square = to_square(x, y);
 
-                if self.white_knights.get(square as usize) {
+                if self.white_knights.get(square) {
                     str.push('N');
-                } else if self.black_knights.get(square as usize) {
+                } else if self.black_knights.get(square) {
                     str.push('n');
                 } else {
                     str.push('.');
@@ -74,8 +74,25 @@ impl Board {
         }
     }
 
+    pub fn after_move(&self, mv: &Move) -> Board {
+        debug_assert!(self.knights().get(mv.from) == true);
+        debug_assert!(self.knights().get(mv.to) == false);
+
+        if self.white_knights.get(mv.from) {
+            Board {
+                white_knights: self.white_knights.cleared(mv.from).set(mv.to),
+                black_knights: self.black_knights,
+            }
+        } else {
+            Board {
+                white_knights: self.white_knights,
+                black_knights: self.black_knights.cleared(mv.from).set(mv.to),
+            }
+        }
+    }
+
     pub fn is_occupied(&self, square: Square) -> bool {
-        self.knights().get(square as usize)
+        self.knights().get(square)
     }
 }
 
@@ -114,4 +131,22 @@ mod tests {
         assert_eq!(switched_board.white_knights, BitBoard::default().set(G8));
         assert_eq!(switched_board.black_knights, BitBoard::default().set(G1));
     }
+
+    #[test]
+    fn after_move() {
+        // arrange
+        let start_board = Board::default()
+            .with_knight(G1, WHITE)
+            .with_knight(G8, BLACK);
+
+        // act
+        let end_board = start_board
+            .after_move(&Move::new(G1, F3))
+            .after_move(&Move::new(G8, F6));
+
+        // assert
+        assert_eq!(end_board.white_knights, BitBoard::default().set(F3));
+        assert_eq!(end_board.black_knights, BitBoard::default().set(F6));
+    }
+
 }
