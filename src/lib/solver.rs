@@ -31,16 +31,10 @@ impl Solver {
             print!("depth={}, #unsolved={}, #solved={}", depth, unsolved.len(), solved.len());
 
             for &board in &unsolved {
-                let successors = self.successors_of(board);
-                let min_depth = self.min_depth(&successors, &solved);
-
-                match min_depth {
-                    Some(d) => {
-                        debug_assert!(d == depth);
-                        solved_at_depth.push(board);
-                    },
-                    None => {},
-                };
+                self.successors_of(board).iter()
+                    .flat_map(|successor| solved.get(successor))
+                    .min()
+                    .map(|_depth| solved_at_depth.push(board));
             }
 
             println!(" -> found {} new solutions in {:?}", solved_at_depth.len(), start.elapsed());
@@ -66,24 +60,6 @@ impl Solver {
         generate_moves(board).iter()
             .map(|mv| board.after_move(mv))
             .collect::<Vec<_>>()
-    }
-
-    fn min_depth(&self, successors: &Vec<Board>, solved: &HashMap<&Board, u32>) -> Option<u32> {
-        let mut min = None;
-
-        for successor in successors {
-            match solved.get(successor) {
-                Some(&depth) => {
-                    min = match min {
-                        Some(current) => if current < depth { Some(current) } else { Some(depth) },
-                        None => Some(depth),
-                    };
-                },
-                None => {},
-            }
-        }
-
-        min
     }
 
     fn mark_as_solved<'a>(&self, board: &'a Board, depth: u32, unsolved: &mut HashSet<&Board>, solved: & mut HashMap<&'a Board, u32>) {
