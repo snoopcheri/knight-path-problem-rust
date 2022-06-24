@@ -1,4 +1,4 @@
-use crate::{BitBoardIterator, Board, from_square, Move, Square, square_to_name, to_square};
+use crate::{Board, from_square, Move, Square, to_square};
 
 pub fn generate_moves(board: &Board) -> Vec<Move> {
     board.knights().iter()

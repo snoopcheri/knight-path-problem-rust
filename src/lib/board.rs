@@ -67,6 +67,13 @@ impl Board {
         }
     }
 
+    pub fn with_switched_knights(&self) -> Board {
+        Board {
+            white_knights: self.black_knights,
+            black_knights: self.white_knights,
+        }
+    }
+
     pub fn is_occupied(&self, square: Square) -> bool {
         self.knights().get(square as usize)
     }
@@ -91,5 +98,20 @@ mod tests {
         // act + assert
         board = board.with_knight(G8, BLACK);
         assert_eq!(board.knights(), BitBoard::default().set(G1).set(G8));
+    }
+
+    #[test]
+    fn with_switched_knights() {
+        // arrange
+        let board = Board::default()
+            .with_knight(G1, WHITE)
+            .with_knight(G8, BLACK);
+
+        // act
+        let switched_board = board.with_switched_knights();
+
+        // assert
+        assert_eq!(switched_board.white_knights, BitBoard::default().set(G8));
+        assert_eq!(switched_board.black_knights, BitBoard::default().set(G1));
     }
 }

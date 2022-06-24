@@ -176,13 +176,13 @@ mod tests {
     #[test]
     fn toggled() {
         // arrange
-        let mut bb = BitBoard::default()
+        let board = BitBoard::default()
             .set(0)
             .set(42)
             .set(63);
 
         // act
-        let toggled = bb.toggled();
+        let toggled = board.toggled();
 
         // assert
         for bit in 0..63 {
